@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotion Detection Model Evaluation - test_optimized</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2, h3 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .metric { font-weight: bold; }
+        .plot { margin-bottom: 30px; }
+        .plot img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <h1>Emotion Detection Model Evaluation</h1>
+    <p><strong>Dataset:</strong> test_optimized</p>
+    <p><strong>Date:</strong> 2025-04-22 16:42:20</p>
+    <p><strong>Model:</strong> cardiffnlp/twitter-roberta-base-emotion</p>
+    
+    <h2>Overall Metrics</h2>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Micro F1</td>
+            <td>0.3262</td>
+        </tr>
+        <tr>
+            <td>Macro F1</td>
+            <td>0.3623</td>
+        </tr>
+        <tr>
+            <td>Weighted F1</td>
+            <td>0.3947</td>
+        </tr>
+        <tr>
+            <td>Samples F1</td>
+            <td>0.3607</td>
+        </tr>
+        <tr>
+            <td>Micro Precision</td>
+            <td>0.2212</td>
+        </tr>
+        <tr>
+            <td>Micro Recall</td>
+            <td>0.6212</td>
+        </tr>
+        <tr>
+            <td>Hamming Loss</td>
+            <td>0.1082</td>
+        </tr>
+        <tr>
+            <td>Exact Match Ratio</td>
+            <td>0.0605</td>
+        </tr>
+        <tr>
+            <td>Label Cardinality</td>
+            <td>1.1809</td>
+        </tr>
+    </table>
+    
+    <h2>Per-Class Metrics</h2>
+    <table>
+        <tr>
+            <th>Emotion</th>
+            <th>F1</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>ROC AUC</th>
+            <th>PR AUC</th>
+            <th>Threshold</th>
+            <th>Support</th>
+        </tr>
+
+        <tr>
+            <td>gratitude</td>
+            <td>0.7660</td>
+            <td>0.8571</td>
+            <td>0.6923</td>
+            <td>0.9547</td>
+            <td>0.8121</td>
+            <td>0.1423</td>
+            <td>182</td>
+        </tr>
+        <tr>
+            <td>remorse</td>
+            <td>0.6479</td>
+            <td>0.5750</td>
+            <td>0.7419</td>
+            <td>0.9888</td>
+            <td>0.6010</td>
+            <td>0.5592</td>
+            <td>31</td>
+        </tr>
+        <tr>
+            <td>nervousness</td>
+            <td>0.5455</td>
+            <td>1.0000</td>
+            <td>0.3750</td>
+            <td>0.9466</td>
+            <td>0.6162</td>
+            <td>0.8936</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>love</td>
+            <td>0.5324</td>
+            <td>0.6016</td>
+            <td>0.4774</td>
+            <td>0.9032</td>
+            <td>0.5019</td>
+            <td>0.1406</td>
+            <td>155</td>
+        </tr>
+        <tr>
+            <td>fear</td>
+            <td>0.5319</td>
+            <td>0.5682</td>
+            <td>0.5000</td>
+            <td>0.9396</td>
+            <td>0.5621</td>
+            <td>0.3353</td>
+            <td>50</td>
+        </tr>
+        <tr>
+            <td>neutral</td>
+            <td>0.5252</td>
+            <td>0.3573</td>
+            <td>0.9913</td>
+            <td>0.4671</td>
+            <td>0.3088</td>
+            <td>0.0972</td>
+            <td>1029</td>
+        </tr>
+        <tr>
+            <td>desire</td>
+            <td>0.5205</td>
+            <td>0.7600</td>
+            <td>0.3958</td>
+            <td>0.9009</td>
+            <td>0.4867</td>
+            <td>0.3508</td>
+            <td>48</td>
+        </tr>
+        <tr>
+            <td>embarrassment</td>
+            <td>0.5143</td>
+            <td>0.6000</td>
+            <td>0.4500</td>
+            <td>0.9133</td>
+            <td>0.4281</td>
+            <td>0.6512</td>
+            <td>20</td>
+        </tr>
+        <tr>
+            <td>surprise</td>
+            <td>0.4908</td>
+            <td>0.4545</td>
+            <td>0.5333</td>
+            <td>0.8871</td>
+            <td>0.3967</td>
+            <td>0.2284</td>
+            <td>75</td>
+        </tr>
+        <tr>
+            <td>optimism</td>
+            <td>0.4623</td>
+            <td>0.4694</td>
+            <td>0.4554</td>
+            <td>0.8577</td>
+            <td>0.3792</td>
+            <td>0.1712</td>
+            <td>101</td>
+        </tr>
+        <tr>
+            <td>sadness</td>
+            <td>0.4510</td>
+            <td>0.4259</td>
+            <td>0.4792</td>
+            <td>0.8958</td>
+            <td>0.4206</td>
+            <td>0.2362</td>
+            <td>96</td>
+        </tr>
+        <tr>
+            <td>amusement</td>
+            <td>0.4188</td>
+            <td>0.4715</td>
+            <td>0.3766</td>
+            <td>0.8734</td>
+            <td>0.3335</td>
+            <td>0.1445</td>
+            <td>154</td>
+        </tr>
+        <tr>
+            <td>joy</td>
+            <td>0.3978</td>
+            <td>0.3956</td>
+            <td>0.4000</td>
+            <td>0.8427</td>
+            <td>0.2720</td>
+            <td>0.1864</td>
+            <td>90</td>
+        </tr>
+        <tr>
+            <td>anger</td>
+            <td>0.3723</td>
+            <td>0.3613</td>
+            <td>0.3839</td>
+            <td>0.8770</td>
+            <td>0.3420</td>
+            <td>0.1805</td>
+            <td>112</td>
+        </tr>
+        <tr>
+            <td>pride</td>
+            <td>0.3636</td>
+            <td>0.4000</td>
+            <td>0.3333</td>
+            <td>0.7356</td>
+            <td>0.2240</td>
+            <td>0.7402</td>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>disgust</td>
+            <td>0.3333</td>
+            <td>0.4828</td>
+            <td>0.2545</td>
+            <td>0.9089</td>
+            <td>0.3240</td>
+            <td>0.3645</td>
+            <td>55</td>
+        </tr>
+        <tr>
+            <td>admiration</td>
+            <td>0.3065</td>
+            <td>0.2140</td>
+            <td>0.5398</td>
+            <td>0.7187</td>
+            <td>0.1951</td>
+            <td>0.0860</td>
+            <td>289</td>
+        </tr>
+        <tr>
+            <td>excitement</td>
+            <td>0.2985</td>
+            <td>0.3448</td>
+            <td>0.2632</td>
+            <td>0.8421</td>
+            <td>0.1919</td>
+            <td>0.2859</td>
+            <td>38</td>
+        </tr>
+        <tr>
+            <td>caring</td>
+            <td>0.2718</td>
+            <td>0.3256</td>
+            <td>0.2333</td>
+            <td>0.8304</td>
+            <td>0.1630</td>
+            <td>0.2183</td>
+            <td>60</td>
+        </tr>
+        <tr>
+            <td>grief</td>
+            <td>0.2667</td>
+            <td>0.1818</td>
+            <td>0.5000</td>
+            <td>0.9224</td>
+            <td>0.1620</td>
+            <td>0.3520</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>disappointment</td>
+            <td>0.2200</td>
+            <td>0.1864</td>
+            <td>0.2683</td>
+            <td>0.8082</td>
+            <td>0.1328</td>
+            <td>0.2010</td>
+            <td>82</td>
+        </tr>
+        <tr>
+            <td>annoyance</td>
+            <td>0.1994</td>
+            <td>0.1210</td>
+            <td>0.5655</td>
+            <td>0.7290</td>
+            <td>0.1193</td>
+            <td>0.1160</td>
+            <td>168</td>
+        </tr>
+        <tr>
+            <td>approval</td>
+            <td>0.1483</td>
+            <td>0.0871</td>
+            <td>0.5000</td>
+            <td>0.5382</td>
+            <td>0.0731</td>
+            <td>0.0994</td>
+            <td>214</td>
+        </tr>
+        <tr>
+            <td>disapproval</td>
+            <td>0.1369</td>
+            <td>0.0842</td>
+            <td>0.3669</td>
+            <td>0.6302</td>
+            <td>0.0686</td>
+            <td>0.1198</td>
+            <td>139</td>
+        </tr>
+        <tr>
+            <td>realization</td>
+            <td>0.1162</td>
+            <td>0.0728</td>
+            <td>0.2875</td>
+            <td>0.6511</td>
+            <td>0.0506</td>
+            <td>0.1387</td>
+            <td>80</td>
+        </tr>
+        <tr>
+            <td>confusion</td>
+            <td>0.1111</td>
+            <td>0.0808</td>
+            <td>0.1778</td>
+            <td>0.6498</td>
+            <td>0.0538</td>
+            <td>0.1306</td>
+            <td>90</td>
+        </tr>
+        <tr>
+            <td>curiosity</td>
+            <td>0.1078</td>
+            <td>0.0580</td>
+            <td>0.7655</td>
+            <td>0.5542</td>
+            <td>0.0549</td>
+            <td>0.0995</td>
+            <td>145</td>
+        </tr>
+        <tr>
+            <td>relief</td>
+            <td>0.0870</td>
+            <td>0.0625</td>
+            <td>0.1429</td>
+            <td>0.7900</td>
+            <td>0.0482</td>
+            <td>0.5020</td>
+            <td>7</td>
+        </tr>
+    </table>
+    
+    <h2>Visualizations</h2>
+    
+    <div class="plot">
+        <h3>Confusion Matrix per Emotion</h3>
+        <img src="confusion_matrix.png" alt="Confusion Matrix">
+    </div>
+    
+    <div class="plot">
+        <h3>ROC Curves for Each Emotion</h3>
+        <img src="roc_curves.png" alt="ROC Curves">
+    </div>
+    
+    <div class="plot">
+        <h3>Precision-Recall Curves for Each Emotion</h3>
+        <img src="pr_curves.png" alt="Precision-Recall Curves">
+    </div>
+    
+    <div class="plot">
+        <h3>Threshold Optimization for Top 10 Emotions</h3>
+        <img src="threshold_optimization.png" alt="Threshold Optimization">
+    </div>
+    
+    <div class="plot">
+        <h3>Label Correlations</h3>
+        <img src="label_correlations.png" alt="Label Correlations">
+    </div>
+</body>
+</html>

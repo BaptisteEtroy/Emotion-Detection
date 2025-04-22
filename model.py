@@ -13,6 +13,7 @@ from sklearn.metrics import f1_score, precision_recall_curve
 import logging
 import json
 from tqdm import tqdm
+import argparse
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -755,273 +756,342 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, d
     
     return model, best_model_state
 
+def cross_validation(train_df, val_df, tokenizer, n_splits=5, batch_size=16):
+    """
+    Perform cross-validation evaluation
+    
+    Args:
+        train_df: Training dataframe
+        val_df: Validation dataframe
+        tokenizer: Tokenizer for text processing
+        n_splits: Number of CV folds
+        batch_size: Batch size for evaluation
+        
+    Returns:
+        cv_results: Dictionary with cross-validation results
+    """
+    logger.info(f"Performing {n_splits}-fold cross-validation...")
+    
+    # Combine train and validation sets for CV
+    combined_df = pd.concat([train_df, val_df], ignore_index=True)
+    
+    # Extract texts and emotion IDs
+    texts = combined_df['preprocessed_text'].values
+    emotion_lists = [parse_emotion_ids(eid) for eid in combined_df['emotion_id'].values]
+    
+    # Find the total number of unique emotions
+    all_emotions = set()
+    for emotion_list in emotion_lists:
+        all_emotions.update(emotion_list)
+    
+    num_classes = max(all_emotions) + 1 if all_emotions else 1
+    logger.info(f"Detected {num_classes} emotion classes")
+    
+    # Convert to one-hot encoding
+    labels_onehot = np.zeros((len(emotion_lists), num_classes))
+    for i, emotions in enumerate(emotion_lists):
+        for emotion in emotions:
+            if 0 <= emotion < num_classes:
+                labels_onehot[i, emotion] = 1
+    
+    # Extract psycholinguistic features
+    psycho_features = extract_psycholinguistic_features(texts)
+    
+    # Setup cross-validation
+    from sklearn.model_selection import KFold
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    
+    cv_metrics = []
+    
+    # Perform cross-validation
+    for fold, (train_idx, val_idx) in enumerate(kf.split(range(len(texts)))):
+        logger.info(f"\nFold {fold+1}/{n_splits}")
+        
+        # Split data for this fold
+        X_train, X_val = texts[train_idx], texts[val_idx]
+        y_train, y_val = labels_onehot[train_idx], labels_onehot[val_idx]
+        p_train, p_val = psycho_features[train_idx], psycho_features[val_idx]
+        
+        # Create datasets
+        train_dataset = EmotionDataset(
+            texts=X_train,
+            labels=y_train,
+            psycholinguistic_features=p_train,
+            tokenizer=tokenizer
+        )
+        
+        val_dataset = EmotionDataset(
+            texts=X_val,
+            labels=y_val,
+            psycholinguistic_features=p_val,
+            tokenizer=tokenizer
+        )
+        
+        # Create data loaders
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=batch_size)
+        
+        # Create and train model
+        model = HybridEmotionModel(num_labels=num_classes)
+        model.to(device)
+        
+        # Initialize optimizer and scheduler
+        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5, weight_decay=0.01)
+        scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, end_factor=1.0, total_iters=100)
+        
+        # Train for 3 epochs (faster for CV)
+        for epoch in range(3):
+            # Training
+            model.train()
+            for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/3 (Training)"):
+                # Move batch to device
+                input_ids = batch['input_ids'].to(device)
+                attention_mask = batch['attention_mask'].to(device)
+                labels = batch['labels'].to(device)
+                psycho_features = batch.get('psycholinguistic_features', None)
+                
+                if psycho_features is not None:
+                    psycho_features = psycho_features.to(device)
+                
+                # Forward pass
+                outputs = model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    psycholinguistic_features=psycho_features,
+                    apply_sigmoid=False
+                )
+                
+                # Calculate loss
+                criterion = nn.BCEWithLogitsLoss()
+                loss = criterion(outputs, labels)
+                
+                # Backward pass
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                scheduler.step()
+        
+        # Evaluate on validation set
+        # Initialize arrays for predictions and ground truth
+        all_probs = []
+        all_preds = []
+        all_labels = []
+        
+        # Evaluate model
+        model.eval()
+        with torch.no_grad():
+            for batch in tqdm(val_loader, desc="Evaluating"):
+                # Move batch to device
+                input_ids = batch['input_ids'].to(device)
+                attention_mask = batch['attention_mask'].to(device)
+                labels = batch['labels'].to(device)
+                psycho_features = batch.get('psycholinguistic_features', None)
+                
+                if psycho_features is not None:
+                    psycho_features = psycho_features.to(device)
+                
+                # Forward pass
+                outputs = model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    psycholinguistic_features=psycho_features,
+                    apply_sigmoid=True
+                )
+                
+                # Use default thresholds of 0.5
+                preds = torch.zeros_like(outputs)
+                for i in range(outputs.size(1)):
+                    preds[:, i] = (outputs[:, i] > 0.5).float()
+                
+                # Store predictions and labels
+                all_probs.append(outputs.cpu().numpy())
+                all_preds.append(preds.cpu().numpy())
+                all_labels.append(labels.cpu().numpy())
+        
+        # Concatenate results
+        all_probs = np.vstack(all_probs)
+        all_preds = np.vstack(all_preds)
+        all_labels = np.vstack(all_labels)
+        
+        # Optimize thresholds
+        thresholds = np.zeros(num_classes)
+        for i in range(num_classes):
+            # Skip if no positive samples
+            if np.sum(all_labels[:, i]) == 0:
+                thresholds[i] = 0.5
+                continue
+            
+            # Calculate precision-recall curve
+            precision, recall, thresh = precision_recall_curve(all_labels[:, i], all_probs[:, i])
+            
+            # Calculate F1 score for each threshold
+            f1 = 2 * precision * recall / (precision + recall + 1e-8)
+            
+            # Find threshold with highest F1 score
+            if len(thresh) > 0:
+                best_idx = np.argmax(f1[:-1])  # Last element has no threshold
+                thresholds[i] = thresh[best_idx]
+            else:
+                thresholds[i] = 0.5
+        
+        # Update predictions with optimized thresholds
+        for i in range(all_probs.shape[1]):
+            all_preds[:, i] = (all_probs[:, i] > thresholds[i]).astype(float)
+        
+        # Calculate metrics
+        from sklearn.metrics import f1_score, precision_score, recall_score, hamming_loss
+        
+        fold_metrics = {}
+        fold_metrics['fold'] = fold + 1
+        
+        # Overall metrics
+        fold_metrics['micro_f1'] = f1_score(all_labels, all_preds, average='micro')
+        fold_metrics['macro_f1'] = f1_score(all_labels, all_preds, average='macro')
+        fold_metrics['weighted_f1'] = f1_score(all_labels, all_preds, average='weighted')
+        fold_metrics['samples_f1'] = f1_score(all_labels, all_preds, average='samples')
+        
+        fold_metrics['micro_precision'] = precision_score(all_labels, all_preds, average='micro')
+        fold_metrics['macro_precision'] = precision_score(all_labels, all_preds, average='macro')
+        
+        fold_metrics['micro_recall'] = recall_score(all_labels, all_preds, average='micro')
+        fold_metrics['macro_recall'] = recall_score(all_labels, all_preds, average='macro')
+        
+        # Sample-based metrics
+        fold_metrics['hamming_loss'] = hamming_loss(all_labels, all_preds)
+        fold_metrics['exact_match_ratio'] = np.mean(np.all(all_labels == all_preds, axis=1))
+        
+        logger.info(f"Fold {fold+1} results: Micro-F1 = {fold_metrics['micro_f1']:.4f}, Macro-F1 = {fold_metrics['macro_f1']:.4f}")
+        
+        cv_metrics.append(fold_metrics)
+    
+    # Calculate average metrics across folds
+    avg_metrics = {}
+    for key in cv_metrics[0].keys():
+        if key == 'fold':
+            continue
+        avg_metrics[key] = np.mean([m[key] for m in cv_metrics])
+    
+    # Log average metrics
+    logger.info("\nCross-validation average results:")
+    logger.info(f"Micro-F1 = {avg_metrics['micro_f1']:.4f}, Macro-F1 = {avg_metrics['macro_f1']:.4f}")
+    logger.info(f"Hamming Loss = {avg_metrics['hamming_loss']:.4f}, Exact Match = {avg_metrics['exact_match_ratio']:.4f}")
+    
+    return {
+        'fold_metrics': cv_metrics,
+        'average_metrics': avg_metrics
+    }
+
 def main():
-    """Main function to execute the model training pipeline"""
-    # Create output directories
+    """Main function to train and save the model"""
+    start_time = time.time()
+    logger.info("Starting emotion detection model training...")
+    
+    # Check for model directory
     os.makedirs("models", exist_ok=True)
-    os.makedirs("results", exist_ok=True)
     
-    print("="*80)
-    print("IMPROVED HYBRID TRANSFORMER-BASED EMOTION DETECTION MODEL")
-    print("="*80)
+    # Load the tokenizer
+    logger.info(f"Loading tokenizer from {TRANSFORMER_MODEL}...")
+    tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER_MODEL)
     
-    # Load preprocessed data
-    print("\n1. LOADING PREPROCESSED DATA")
-    print("-"*50)
-    
+    # Load data
+    logger.info("Loading data...")
     train_df = pd.read_csv("processed_data/train.csv")
     val_df = pd.read_csv("processed_data/val.csv")
     test_df = pd.read_csv("processed_data/test.csv")
     
-    print(f"✓ Loaded datasets:")
-    print(f"  - Training set: {train_df.shape}")
-    print(f"  - Validation set: {val_df.shape}")
-    print(f"  - Test set: {test_df.shape}")
-    
-    # Add diagnostic information
-    print("\nDiagnostic information:")
-    print(f"- Column names: {train_df.columns.tolist()}")
-    if 'emotion_id' in train_df.columns:
-        print(f"- emotion_id dtype: {train_df['emotion_id'].dtype}")
-        print(f"- emotion_id sample values: {train_df['emotion_id'].head(5).tolist()}")
-        print(f"- unique emotion_id values: {train_df['emotion_id'].nunique()}")
-    if 'emotion' in train_df.columns:
-        print(f"- emotion dtype: {train_df['emotion'].dtype}")
-        print(f"- emotion sample values: {train_df['emotion'].head(5).tolist()}")
-        print(f"- unique emotion values: {train_df['emotion'].nunique()}")
-    if 'preprocessed_text' in train_df.columns:
-        print(f"- preprocessed_text dtype: {train_df['preprocessed_text'].dtype}")
-        print(f"- preprocessed_text sample: {train_df['preprocessed_text'].iloc[0][:50]}...")
-    
-    # Initialize tokenizer
-    print("\n2. INITIALIZING MODEL AND TOKENIZER")
-    print("-"*50)
-    
-    # Use AutoTokenizer for the emotion-specific model
-    tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER_MODEL)
-    
     # Prepare data
+    logger.info("Preparing data...")
     train_dataloader, val_dataloader, test_dataloader, num_labels = prepare_data(
         train_df, val_df, test_df, tokenizer
     )
     
-    # Calculate class weights from training data
-    train_labels = np.vstack([batch['labels'].numpy() for batch in train_dataloader.dataset])
-    class_weights = calculate_class_weights(train_labels)
+    # Parse command line arguments to determine whether to train or run cross-validation
+    parser = argparse.ArgumentParser(description='Emotion Detection Model')
+    parser.add_argument('--cv', action='store_true', help='Run cross-validation')
+    parser.add_argument('--epochs', type=int, default=EPOCHS, help='Number of training epochs')
+    args = parser.parse_args()
     
-    # Initialize model
-    model = HybridEmotionModel(num_labels=num_labels)
-    model.to(device)
-    
-    print(f"✓ Initialized improved hybrid model with {num_labels} emotion labels")
-    if os.path.exists('emotion_mapping.json'):
-        with open('emotion_mapping.json', 'r') as f:
-            emotion_mapping = json.load(f)
-        print("\nDetected emotion classes:")
-        for i in range(min(10, num_labels)):  # Show first 10 emotions
-            if str(i) in emotion_mapping:
-                print(f"  - {i}: {emotion_mapping[str(i)]}")
-        if num_labels > 10:
-            print(f"  - ... and {num_labels - 10} more emotions")
-    print(f"✓ Using {TRANSFORMER_MODEL} as the base model")
-    print(f"✓ Applied class weighting to handle imbalance")
-    
-    # Set up optimizer and scheduler
-    print("\n3. TRAINING MODEL")
-    print("-"*50)
-    
-    # Set up optimizer based on configuration
-    if OPTIMIZER == "AdamW":
-        optimizer = AdamW(
+    if args.cv:
+        # Run cross-validation
+        logger.info("Running cross-validation...")
+        cv_results = cross_validation(train_df, val_df, tokenizer)
+        
+        # Save cross-validation results
+        cv_results_path = "models/cross_validation_results.json"
+        with open(cv_results_path, "w") as f:
+            json.dump(cv_results, f, indent=4)
+        
+        logger.info(f"Cross-validation results saved to {cv_results_path}")
+        
+    else:
+        # Create model
+        logger.info(f"Creating model with {num_labels} emotion classes...")
+        model = HybridEmotionModel(num_labels=num_labels)
+        model.to(device)
+        
+        # Calculate class weights for loss function
+        train_labels = []
+        for batch in train_dataloader:
+            train_labels.append(batch['labels'].cpu().numpy())
+        train_labels = np.vstack(train_labels)
+        class_weights = calculate_class_weights(train_labels)
+        
+        # Optimizer
+        optimizer = getattr(optim, OPTIMIZER)(
             model.parameters(),
             lr=LEARNING_RATE,
             weight_decay=WEIGHT_DECAY
         )
-        print(f"✓ Using AdamW optimizer with weight decay {WEIGHT_DECAY}")
-    else:  # Default to Adam
-        optimizer = optim.Adam(
-            model.parameters(),
-            lr=LEARNING_RATE
-        )
-        print(f"✓ Using Adam optimizer with learning rate {LEARNING_RATE}")
-    
-    # Calculate total training steps for scheduler
-    total_steps = len(train_dataloader) * EPOCHS // GRADIENT_ACCUMULATION_STEPS
-    
-    # Create scheduler based on configuration
-    if SCHEDULER == "cosine_warmup":
-        scheduler = get_cosine_schedule_with_warmup(
-            optimizer,
-            num_warmup_steps=NUM_WARMUP_STEPS,
-            num_training_steps=total_steps
-        )
-        print(f"✓ Using cosine learning rate scheduler with {NUM_WARMUP_STEPS} warmup steps")
-    else:  # Default to linear warmup
-        scheduler = get_linear_schedule_with_warmup(
-            optimizer,
-            num_warmup_steps=NUM_WARMUP_STEPS,
-            num_training_steps=total_steps
-        )
-        print(f"✓ Using linear learning rate scheduler with {NUM_WARMUP_STEPS} warmup steps")
-    
-    # Train model
-    start_time = time.time()
-    model, best_model_state = train_model(
-        model=model,
-        train_dataloader=train_dataloader,
-        val_dataloader=val_dataloader,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        device=device,
-        class_weights=class_weights,
-        epochs=EPOCHS
-    )
-    training_time = time.time() - start_time
-    
-    # Get optimized thresholds
-    thresholds = best_model_state['thresholds']
-    
-    print(f"✓ Model trained successfully in {training_time:.2f}s")
-    print(f"✓ Best validation Micro-F1 score: {best_model_state['val_f1_micro']:.4f}")
-    print(f"✓ Best validation Macro-F1 score: {best_model_state['val_f1_macro']:.4f}")
-    
-    # Save model and metadata
-    model_save = {
-        'model_state_dict': model.state_dict(),
-        'thresholds': thresholds,
-        'num_labels': num_labels,
-        'transformer_model': TRANSFORMER_MODEL,
-        'psycholinguistic_dim': PSYCHOLINGUISTIC_FEATURES_DIM,
-        'class_weights': best_model_state['class_weights'],
-        'val_f1_micro': best_model_state['val_f1_micro'],
-        'val_f1_macro': best_model_state['val_f1_macro'],
-        'training_params': {
-            'batch_size': BATCH_SIZE,
-            'learning_rate': LEARNING_RATE,
-            'epochs': EPOCHS,
-            'warmup_steps': NUM_WARMUP_STEPS,
-            'weight_decay': WEIGHT_DECAY
-        }
-    }
-    
-    torch.save(model_save, "models/improved_hybrid_emotion_model.pt")
-    print(f"✓ Model saved to models/improved_hybrid_emotion_model.pt")
-    
-    # Evaluate on test set
-    print("\n4. EVALUATING MODEL")
-    print("-"*50)
-    
-    # Load emotion class names for better output
-    with open('emotion_classes.json', 'r') as f:
-        emotion_classes = json.load(f)
-    
-    # Evaluation
-    model.eval()
-    all_probs = []
-    all_labels = []
-    
-    with torch.no_grad():
-        for batch in tqdm(test_dataloader, desc="Testing"):
-            # Move batch to device
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            labels = batch['labels'].to(device)
-            psycho_features = batch.get('psycholinguistic_features', None)
-            
-            if psycho_features is not None:
-                psycho_features = psycho_features.to(device)
-            
-            # Forward pass
-            outputs = model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                psycholinguistic_features=psycho_features,
-                apply_sigmoid=True  # Get probabilities
+        
+        # Scheduler
+        num_training_steps = len(train_dataloader) * args.epochs
+        
+        if SCHEDULER == "linear_warmup":
+            scheduler = get_linear_schedule_with_warmup(
+                optimizer,
+                num_warmup_steps=NUM_WARMUP_STEPS,
+                num_training_steps=num_training_steps
             )
-            
-            # Append to lists for metrics calculation
-            all_probs.append(outputs.cpu().numpy())
-            all_labels.append(labels.cpu().numpy())
-    
-    # Concatenate predictions and labels
-    all_probs = np.vstack(all_probs)
-    all_labels = np.vstack(all_labels)
-    
-    # Apply optimized thresholds
-    all_preds = np.zeros_like(all_probs)
-    for i in range(all_probs.shape[1]):
-        all_preds[:, i] = (all_probs[:, i] > thresholds[i]).astype(float)
-    
-    # Calculate metrics with optimized thresholds
-    test_f1_micro = f1_score(all_labels, all_preds, average='micro')
-    test_f1_macro = f1_score(all_labels, all_preds, average='macro')
-    
-    # Calculate metrics with default threshold (0.5) for comparison
-    default_preds = (all_probs > 0.5).astype(float)
-    default_f1_micro = f1_score(all_labels, default_preds, average='micro')
-    default_f1_macro = f1_score(all_labels, default_preds, average='macro')
-    
-    print(f"Test Results with optimized thresholds:")
-    print(f"  - Micro F1 Score: {test_f1_micro:.4f}")
-    print(f"  - Macro F1 Score: {test_f1_macro:.4f}")
-    
-    print(f"Test Results with default threshold (0.5):")
-    print(f"  - Micro F1 Score: {default_f1_micro:.4f}")
-    print(f"  - Macro F1 Score: {default_f1_macro:.4f}")
-    
-    # Calculate per-class metrics with emotion names
-    print("\nPer-class performance:")
-    class_metrics = []
-    for i in range(all_labels.shape[1]):
-        class_f1 = f1_score(all_labels[:, i], all_preds[:, i], average='binary')
-        support = np.sum(all_labels[:, i])
-        emotion_name = emotion_classes[i] if i < len(emotion_classes) else f"Unknown_{i}"
+        elif SCHEDULER == "cosine_warmup":
+            scheduler = get_cosine_schedule_with_warmup(
+                optimizer,
+                num_warmup_steps=NUM_WARMUP_STEPS,
+                num_training_steps=num_training_steps
+            )
         
-        if support > 0:
-            print(f"  - {emotion_name} (support={int(support)}): F1={class_f1:.4f}, threshold={thresholds[i]:.3f}")
-            class_metrics.append((emotion_name, class_f1, support, thresholds[i]))
-    
-    # Sort class metrics by F1 score for better readability
-    print("\nTop performing emotions:")
-    for emotion_name, class_f1, support, threshold in sorted(class_metrics, key=lambda x: x[1], reverse=True)[:5]:
-        print(f"  - {emotion_name}: F1={class_f1:.4f}, support={int(support)}")
+        # Train model
+        logger.info(f"Training model for {args.epochs} epochs...")
+        model, best_model_state = train_model(
+            model=model,
+            train_dataloader=train_dataloader,
+            val_dataloader=val_dataloader,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            device=device,
+            class_weights=class_weights,
+            epochs=args.epochs
+        )
         
-    print("\nWorst performing emotions:")
-    for emotion_name, class_f1, support, threshold in sorted(class_metrics, key=lambda x: x[1])[:5]:
-        print(f"  - {emotion_name}: F1={class_f1:.4f}, support={int(support)}")
-    
-    # Save results
-    results = {
-        "test_f1_micro": float(test_f1_micro),
-        "test_f1_macro": float(test_f1_macro),
-        "default_f1_micro": float(default_f1_micro),
-        "default_f1_macro": float(default_f1_macro),
-        "model_type": "Improved RoBERTa-BiLSTM Hybrid with Attention",
-        "base_model": TRANSFORMER_MODEL,
-        "thresholds": thresholds.tolist(),
-        "training_time": training_time,
-        "epochs": EPOCHS,
-        "batch_size": BATCH_SIZE,
-        "learning_rate": LEARNING_RATE,
-        "warmup_steps": NUM_WARMUP_STEPS,
-        "weight_decay": WEIGHT_DECAY,
-        "class_performance": {
-            emotion_classes[i] if i < len(emotion_classes) else f"Unknown_{i}": {
-                "f1": float(f1_score(all_labels[:, i], all_preds[:, i], average='binary')),
-                "support": int(np.sum(all_labels[:, i])),
-                "threshold": float(thresholds[i])
-            } for i in range(all_labels.shape[1]) if np.sum(all_labels[:, i]) > 0
+        # Save model
+        if best_model_state is not None:
+            model.load_state_dict(best_model_state)
+        
+        # Save with additional metadata
+        model_data = {
+            'model_state_dict': model.state_dict(),
+            'num_labels': num_labels,
+            'transformer_model': TRANSFORMER_MODEL,
+            'training_time': time.time() - start_time,
+            'epochs': args.epochs,
+            'batch_size': BATCH_SIZE,
+            'learning_rate': LEARNING_RATE
         }
-    }
+        
+        model_path = "models/improved_hybrid_emotion_model.pt"
+        torch.save(model_data, model_path)
+        logger.info(f"Model saved to {model_path}")
     
-    with open("results/improved_hybrid_model_results.json", "w") as f:
-        json.dump(results, f, indent=4)
-    
-    print(f"✓ Results saved to results/improved_hybrid_model_results.json")
-    
-    # Final timing
-    end_time = time.time()
-    print(f"\nTotal execution time: {end_time - start_time:.2f}s")
+    logger.info(f"Process completed in {time.time() - start_time:.2f} seconds")
 
 def predict_emotions(text, model_path="models/improved_hybrid_emotion_model.pt"):
     """
