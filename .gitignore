@@ -1,0 +1,15 @@
+__pycache__/
+
+venv/
+
+processed_data/
+models/
+*.pkl
+*.pt
+*.bin
+data/
+
+.DS_Store
+*.ipynb
+
+.vscode/

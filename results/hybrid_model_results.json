@@ -1,0 +1,9 @@
+{
+    "test_f1_micro": 0.4642319277108434,
+    "test_f1_macro": 0.23733300051470105,
+    "model_type": "RoBERTa-BiLSTM Hybrid",
+    "training_time": 1037.51007604599,
+    "epochs": 4,
+    "batch_size": 16,
+    "learning_rate": 2e-05
+}
