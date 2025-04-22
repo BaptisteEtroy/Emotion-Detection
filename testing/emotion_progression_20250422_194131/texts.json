@@ -1,0 +1,26 @@
+[
+  {
+    "text_idx": 1,
+    "text": "I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!"
+  },
+  {
+    "text_idx": 2,
+    "text": "Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought."
+  },
+  {
+    "text_idx": 3,
+    "text": "Spent hours debugging but still can't figure out what's wrong. This is so frustrating!"
+  },
+  {
+    "text_idx": 4,
+    "text": "Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly."
+  },
+  {
+    "text_idx": 5,
+    "text": "Made great progress today after fixing that bug. The project is starting to take shape."
+  },
+  {
+    "text_idx": 6,
+    "text": "Just presented the project to the team and everyone loved it! All the hard work was worth it."
+  }
+]

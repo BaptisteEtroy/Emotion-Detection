@@ -1,0 +1,169 @@
+text_idx,text,emotion,probability,detected
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,excitement,0.6491109728813171,True
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,pride,0.3113172650337219,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,grief,0.23294095695018768,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,desire,0.1973220556974411,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,relief,0.19731886684894562,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,surprise,0.18641409277915955,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,embarrassment,0.18052971363067627,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,joy,0.16633406281471252,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,disappointment,0.1584804803133011,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,gratitude,0.15431833267211914,True
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,nervousness,0.15213879942893982,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,caring,0.15054190158843994,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,realization,0.13842397928237915,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,neutral,0.13792499899864197,True
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,anger,0.1345054805278778,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,fear,0.13341239094734192,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,confusion,0.13305263221263885,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,disapproval,0.1301284283399582,True
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,remorse,0.12966294586658478,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,amusement,0.12504132091999054,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,annoyance,0.12436636537313461,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,disgust,0.12258484214544296,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,love,0.11966557055711746,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,optimism,0.11451559513807297,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,admiration,0.11354772746562958,True
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,approval,0.09278442710638046,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,sadness,0.08478671312332153,False
+1,I'm so excited about starting this new project today. Can't wait to see what we'll accomplish!,curiosity,0.08289507031440735,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",embarrassment,0.37192070484161377,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",nervousness,0.25310376286506653,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",fear,0.24982750415802002,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",grief,0.21240414679050446,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",surprise,0.19425123929977417,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",desire,0.18235564231872559,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",realization,0.17408767342567444,True
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",relief,0.16220182180404663,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",pride,0.15588021278381348,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",disappointment,0.14739862084388733,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",disgust,0.1428980976343155,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",confusion,0.13776446878910065,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",remorse,0.13664132356643677,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",excitement,0.1323913335800171,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",caring,0.13138335943222046,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",amusement,0.12142591178417206,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",neutral,0.11877742409706116,True
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",annoyance,0.11732830852270126,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",joy,0.11677804589271545,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",curiosity,0.1162717267870903,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",gratitude,0.11525632441043854,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",disapproval,0.10957033932209015,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",love,0.10798964649438858,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",sadness,0.10710800439119339,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",optimism,0.0994938537478447,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",approval,0.09196392446756363,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",anger,0.08633822947740555,False
+2,"Hmm, running into some unexpected issues with the implementation. This might be trickier than I thought.",admiration,0.07933105528354645,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,nervousness,0.391201376914978,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,fear,0.2509656250476837,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,grief,0.24796000123023987,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,disappointment,0.2376525104045868,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,disgust,0.22232531011104584,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,relief,0.21886762976646423,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,sadness,0.19181440770626068,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,desire,0.17078182101249695,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,embarrassment,0.1663600355386734,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,disapproval,0.15311405062675476,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,anger,0.15279586613178253,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,pride,0.15151552855968475,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,annoyance,0.14328570663928986,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,approval,0.13133090734481812,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,confusion,0.13125556707382202,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,curiosity,0.13078027963638306,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,surprise,0.12519098818302155,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,caring,0.12226378172636032,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,realization,0.11998238414525986,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,optimism,0.11870843172073364,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,joy,0.10991781204938889,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,gratitude,0.10443833470344543,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,love,0.10206632316112518,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,excitement,0.10174161940813065,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,neutral,0.10060606151819229,True
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,amusement,0.09935904294252396,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,remorse,0.09869936853647232,False
+3,Spent hours debugging but still can't figure out what's wrong. This is so frustrating!,admiration,0.0895349532365799,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,relief,0.5727797746658325,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,pride,0.3687775135040283,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,joy,0.35329726338386536,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,grief,0.22881822288036346,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,nervousness,0.21601256728172302,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,excitement,0.18447774648666382,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,sadness,0.18023554980754852,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,fear,0.17157462239265442,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,neutral,0.15700587630271912,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,surprise,0.1559848189353943,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,curiosity,0.15537932515144348,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,caring,0.1523994654417038,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,love,0.14292098581790924,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,disapproval,0.14142487943172455,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,confusion,0.13443605601787567,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,admiration,0.13375279307365417,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,optimism,0.12529852986335754,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,realization,0.1250721514225006,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,desire,0.12463032454252243,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,approval,0.12010252475738525,True
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,embarrassment,0.11870267987251282,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,annoyance,0.10540562123060226,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,amusement,0.1020418107509613,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,gratitude,0.10186848044395447,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,remorse,0.10159671306610107,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,disappointment,0.09841655939817429,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,anger,0.08838576823472977,False
+4,Finally found the bug! It was a simple typo all along. Feeling relieved but also a bit silly.,disgust,0.07004287093877792,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,pride,0.29803162813186646,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,relief,0.23154959082603455,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,joy,0.2152346968650818,True
+5,Made great progress today after fixing that bug. The project is starting to take shape.,excitement,0.18678081035614014,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,grief,0.17246541380882263,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,optimism,0.14192357659339905,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,realization,0.1407403200864792,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,caring,0.1382787674665451,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,desire,0.1323060542345047,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,surprise,0.13072672486305237,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,neutral,0.12990877032279968,True
+5,Made great progress today after fixing that bug. The project is starting to take shape.,confusion,0.12339542806148529,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,nervousness,0.12296224385499954,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,disapproval,0.12140969932079315,True
+5,Made great progress today after fixing that bug. The project is starting to take shape.,admiration,0.119235560297966,True
+5,Made great progress today after fixing that bug. The project is starting to take shape.,embarrassment,0.11772631108760834,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,annoyance,0.1115863099694252,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,amusement,0.11121966689825058,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,disappointment,0.10621624439954758,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,approval,0.10501524806022644,True
+5,Made great progress today after fixing that bug. The project is starting to take shape.,curiosity,0.1040443554520607,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,remorse,0.1005190834403038,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,love,0.09760362654924393,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,gratitude,0.09569889307022095,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,sadness,0.08607632666826248,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,anger,0.08530665189027786,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,fear,0.06916606426239014,False
+5,Made great progress today after fixing that bug. The project is starting to take shape.,disgust,0.06774690002202988,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,pride,0.32246920466423035,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,joy,0.20725126564502716,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,excitement,0.20170803368091583,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,grief,0.18494676053524017,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,relief,0.1744772046804428,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,amusement,0.14717265963554382,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,surprise,0.13713784515857697,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,annoyance,0.13618260622024536,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,embarrassment,0.1347411721944809,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,desire,0.12575621902942657,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,disapproval,0.12183482199907303,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,disappointment,0.12082569301128387,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,love,0.11758331209421158,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,nervousness,0.116482675075531,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,neutral,0.11369595676660538,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,confusion,0.11199100315570831,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,anger,0.10593636333942413,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,gratitude,0.10556553304195404,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,admiration,0.10456264764070511,True
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,realization,0.10167837142944336,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,optimism,0.09930906444787979,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,sadness,0.09818710386753082,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,disgust,0.09519385546445847,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,approval,0.09083520621061325,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,caring,0.09038100391626358,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,curiosity,0.08585412800312042,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,fear,0.08374357223510742,False
+6,Just presented the project to the team and everyone loved it! All the hard work was worth it.,remorse,0.0814943015575409,False
