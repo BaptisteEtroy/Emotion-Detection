@@ -70,6 +70,7 @@ python testing.py
 
 ## Repository Structure
 
+```plaintext
 | `models/` | will be created when running model.py (holds the models)
 | `processed_data/` | will be created when running preprocessing.py(holds preprocessed datasets)
 
@@ -87,6 +88,7 @@ python testing.py
 
 | `requirements.txt`
 | `README.md`
+```
 
 ## Model Architecture
 
