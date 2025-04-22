@@ -62,11 +62,12 @@ This will:
 
 ### Predicting Emotions
 
-To predict emotions in new text, modify the testing file text line and then run:
+To predict emotions in new text, modify testing.py with your desired conversation then run:
 
 ```bash
 python testing.py
 ```
+On top of the output given you will get a progression analysis saved in testing/ with different emotions and their spikes throughout the conversation.
 
 ## Repository Structure
 

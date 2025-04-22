@@ -73,7 +73,7 @@ def analyze_emotion_progression(texts, title="Emotion Progression Analysis"):
     df = pd.DataFrame(results)
     
     # Create output directory
-    output_dir = f"testing/emotion_progression_{timestamp}"
+    output_dir = f"testing/"
     os.makedirs(output_dir, exist_ok=True)
     
     # Save raw data as CSV
