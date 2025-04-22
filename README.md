@@ -62,14 +62,10 @@ This will:
 
 ### Predicting Emotions
 
-To predict emotions in new text:
+To predict emotions in new text, modify the testing file text line and then run:
 
-```python
-from model import predict_emotions
-
-text = "I'm so excited about this new project, although I'm a bit nervous too."
-emotions = predict_emotions(text)
-print(emotions)
+```bash
+python testing.py
 ```
 
 ## Model Architecture

@@ -1035,7 +1035,12 @@ def predict_emotions(text, model_path="models/improved_hybrid_emotion_model.pt")
         dict: Predicted emotions with their probabilities
     """
     # Load model data
-    model_data = torch.load(model_path, map_location=device)
+    try:
+        # Try with weights_only=False for compatibility with PyTorch 2.6+
+        model_data = torch.load(model_path, map_location=device, weights_only=False)
+    except TypeError:
+        # Fallback for older PyTorch versions that don't have weights_only parameter
+        model_data = torch.load(model_path, map_location=device)
     
     # Get model parameters
     num_labels = model_data['num_labels']
