@@ -68,6 +68,26 @@ To predict emotions in new text, modify the testing file text line and then run:
 python testing.py
 ```
 
+## Repository Structure
+
+| `models/` | will be created when running model.py (holds the models)
+| `processed_data/` | will be created when running preprocessing.py(holds preprocessed datasets)
+
+| `results/` | contains simple evaluation results and metrics training(f1 per emotion and threshold)
+| `testing/` | Output from testing.py: holds emotion progression over a conversation
+| `evaluation_reports/` | Contains detailed evaluation reports with visualisations and metrics
+| `visualisations/` | includes visualisation of emotion analysis over different phrases
+
+| `emotion_mapping.json` | Detailed mapping of emotions with their descriptions |
+
+| `preprocessing.py` | Script preprocessing and feature extraction
+| `model.py` | Hybrid emotion detection model training
+| `evaluation.py` | Script for model evaluation
+| `testing.py` | Script for analysing emotion progression over time
+
+| `requirements.txt`
+| `README.md`
+
 ## Model Architecture
 
 The model uses a hybrid architecture:

@@ -473,11 +473,7 @@ def prepare_data(train_df, val_df, test_df, tokenizer):
     else:
         emotion_classes = [f"emotion_{i}" for i in range(num_classes)]
     
-    # Save emotion classes for later use
-    with open('emotion_classes.json', 'w') as f:
-        json.dump(list(emotion_classes), f)
-    
-    # Also save with the correct mapping
+    # Save emotion mapping with the correct mapping
     print("Saving emotion mapping...")
     emotion_mapping = {str(i): emotion_name for i, emotion_name in enumerate(emotion_classes)}
     with open('emotion_mapping.json', 'w') as f:
@@ -911,9 +907,10 @@ def main():
     print("\n4. EVALUATING MODEL")
     print("-"*50)
     
-    # Load emotion class names for better output
-    with open('emotion_classes.json', 'r') as f:
-        emotion_classes = json.load(f)
+    # Load emotion mapping for better output
+    with open('emotion_mapping.json', 'r') as f:
+        emotion_mapping = json.load(f)
+        emotion_classes = [emotion_mapping[str(i)] for i in range(num_labels)]
     
     # Evaluation
     model.eval()
@@ -1049,9 +1046,10 @@ def predict_emotions(text, model_path="models/improved_hybrid_emotion_model.pt")
     model.to(device)
     model.eval()
     
-    # Load emotion classes
-    with open('emotion_classes.json', 'r') as f:
-        emotion_classes = json.load(f)
+    # Load emotion mapping
+    with open('emotion_mapping.json', 'r') as f:
+        emotion_mapping = json.load(f)
+        emotion_classes = [emotion_mapping[str(i)] for i in range(num_labels)]
     
     # Preprocess and tokenize text
     encoding = tokenizer(

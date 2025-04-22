@@ -78,9 +78,10 @@ def load_model_and_data(model_path=MODEL_PATH, data_paths=DATA_PATHS):
     from transformers import AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(transformer_name)
     
-    # Load emotion classes
-    with open('emotion_classes.json', 'r') as f:
-        emotion_classes = json.load(f)
+    # Load emotion mapping
+    with open('emotion_mapping.json', 'r') as f:
+        emotion_mapping = json.load(f)
+        emotion_classes = [emotion_mapping[str(i)] for i in range(num_labels)]
     
     # Load datasets
     print("Loading datasets...")
