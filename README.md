@@ -2,6 +2,8 @@
 
 A hybrid transformer-based model for multi-label emotion detection in text. This project combines transformer-based language models with psycholinguistic features to achieve more nuanced emotion recognition. Made for efficient emotion detection in modern conversations oover social media and online conversations.
 
+<img width="1508" alt="Screenshot 2025-04-23 at 18 40 02" src="https://github.com/user-attachments/assets/9cd24970-9eaa-4d23-b6ed-2f0aabc5d234" />
+
 ## Features
 
 - **28 Emotion Categories**: Detects a wide range of emotions (see the emotion mapping json)
