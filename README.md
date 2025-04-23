@@ -136,7 +136,7 @@ Performance varies by emotion, with generally better results for common emotions
 
 ## Dataset
 
-This project uses the [GoEmotions](https://github.com/google-research/google-research/tree/master/goemotions) dataset, which contains 58k Reddit comments labeled with 28 emotions.
+This project uses the [GoEmotions](https://www.kaggle.com/datasets/debarshichanda/goemotions) dataset, which contains 58k Reddit comments labeled with 28 emotions.
 
 ## License
 
