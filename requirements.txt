@@ -6,4 +6,6 @@ scikit-learn>=1.0.0
 tqdm>=4.62.0
 matplotlib>=3.5.0
 nltk>=3.6.0
-kagglehub>=0.2.5 
+kagglehub>=0.2.5
+flask==2.3.3
+plotly==5.18.0 

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .emotion-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .probability-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #4e73df 0%, #224abe 100%);
+        }
+        .conversation-bubble {
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            margin-bottom: 10px;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        #emotion-chart-container {
+            height: 400px;
+            margin-top: 20px;
+        }
+        .jumbotron {
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 0.3rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h1 class="display-4">Emotion Detection</h1>
+            <p class="lead">Analyze emotions in text using our hybrid transformer-based model.</p>
+            <hr class="my-4">
+            <p>Detect 28 different emotions in any text with our state-of-the-art model.</p>
+        </div>
+
+        <!-- Conversation Analysis -->
+        <div class="row">
+            <div class="col-md-6">
+                <div id="conversation-container" class="border rounded p-3" style="height: 350px; overflow-y: auto;">
+                    <div id="conversation-messages"></div>
+                </div>
+                <form id="conversation-form" class="mt-3">
+                    <div class="input-group">
+                        <input type="text" id="conversation-input" class="form-control" placeholder="Type your message...">
+                        <button type="submit" class="btn btn-primary">
+                            <span id="conversation-spinner" class="spinner-border d-none" role="status"></span>
+                            Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div id="emotion-chart-container">
+                    <canvas id="emotion-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let conversationId = null;
+            let emotionChart = null;
+
+            // Initialize the emotion chart
+            function initEmotionChart() {
+                const ctx = document.getElementById('emotion-chart').getContext('2d');
+                emotionChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: []
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Emotion Progression'
+                            },
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Message Number'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Probability'
+                                },
+                                min: 0,
+                                max: 1
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Start a new conversation
+            function startConversation() {
+                fetch('/start_conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    conversationId = data.conversation_id;
+                    console.log('Started conversation with ID:', conversationId);
+                    
+                    // Initialize chart
+                    if (emotionChart === null) {
+                        initEmotionChart();
+                    } else {
+                        // Clear existing chart
+                        emotionChart.data.labels = [];
+                        emotionChart.data.datasets = [];
+                        emotionChart.update();
+                    }
+                    
+                    // Clear conversation container
+                    document.getElementById('conversation-messages').innerHTML = '';
+                })
+                .catch(error => {
+                    console.error('Error starting conversation:', error);
+                });
+            }
+
+            // Add a message to the conversation
+            function addMessageToConversation(text) {
+                if (!conversationId) {
+                    console.error('No active conversation');
+                    return;
+                }
+
+                // Show spinner
+                document.getElementById('conversation-spinner').classList.remove('d-none');
+                
+                fetch('/add_to_conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        text: text
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide spinner
+                    document.getElementById('conversation-spinner').classList.add('d-none');
+                    
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
+                    }
+                    
+                    // Add message to conversation
+                    const messagesContainer = document.getElementById('conversation-messages');
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('conversation-bubble', 'bg-light');
+                    messageElement.innerHTML = `                        <p class="mb-1">${text}</p>
+                        <div class="message-emotions">
+                            ${renderEmotionPills(data.emotions, 4)}
+                        </div>
+                    `;
+                    messagesContainer.appendChild(messageElement);
+                    
+                    // Scroll to bottom
+                    const conversationContainer = document.getElementById('conversation-container');
+                    conversationContainer.scrollTop = conversationContainer.scrollHeight;
+                    
+                    // Update chart
+                    updateEmotionChart(data.graph_data);
+                })
+                .catch(error => {
+                    document.getElementById('conversation-spinner').classList.add('d-none');
+                    console.error('Error adding message:', error);
+                });
+            }
+
+            // Update the emotion progression chart
+            function updateEmotionChart(graphData) {
+                if (!graphData || !graphData.top_emotions || graphData.top_emotions.length === 0) {
+                    return;
+                }
+
+                // Get unique message IDs
+                const uniqueMessageIds = [...new Set(graphData.message_ids)];
+                
+                // Update chart labels
+                emotionChart.data.labels = uniqueMessageIds;
+                
+                // Clear existing datasets
+                emotionChart.data.datasets = [];
+                
+                // Create a dataset for each top emotion
+                const colors = ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b', '#36b9cc', '#fd7e14', '#6f42c1'];
+                
+                // Get list of emotions to track (top 5 consistent emotions)
+                const emotionsToTrack = graphData.top_emotions;
+                
+                // Group data by emotion
+                const emotionData = {};
+                emotionsToTrack.forEach(emotion => {
+                    emotionData[emotion] = {
+                        messageIds: [],
+                        probabilities: []
+                    };
+                });
+                
+                // Populate emotion data for each message
+                uniqueMessageIds.forEach(messageId => {
+                    // Find all data points for this message
+                    const messageIndices = graphData.message_ids.map((id, index) => id === messageId ? index : -1).filter(idx => idx !== -1);
+                    
+                    // Create a map of emotions to probabilities for this message
+                    const messageEmotions = {};
+                    messageIndices.forEach(idx => {
+                        messageEmotions[graphData.emotions[idx]] = graphData.probabilities[idx];
+                    });
+                    
+                    // Add data for each tracked emotion
+                    emotionsToTrack.forEach(emotion => {
+                        emotionData[emotion].messageIds.push(messageId);
+                        // Use the probability if this emotion exists in this message, otherwise use 0
+                        emotionData[emotion].probabilities.push(messageEmotions[emotion] || 0);
+                    });
+                });
+                
+                // Create datasets
+                emotionsToTrack.forEach((emotion, index) => {
+                    emotionChart.data.datasets.push({
+                        label: emotion,
+                        data: emotionData[emotion].probabilities,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length] + '20',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        tension: 0.3
+                    });
+                });
+                
+                // Update chart
+                emotionChart.update();
+            }
+
+            // Render emotion pills
+            function renderEmotionPills(emotions, limit = null) {
+                const sortedEmotions = Object.entries(emotions)
+                    .filter(([_, details]) => details.detected)
+                    .sort((a, b) => b[1].probability - a[1].probability);
+                
+                const emotionsToDisplay = limit ? sortedEmotions.slice(0, limit) : sortedEmotions;
+                
+                return emotionsToDisplay.map(([emotion, details]) => {
+                    const percent = Math.round(details.probability * 100);
+                    const colorClass = getEmotionColorClass(emotion);
+                    return `<span class="emotion-pill ${colorClass}">${emotion} ${percent}%</span>`;
+                }).join('');
+            }
+
+            // Get a color class based on the emotion
+            function getEmotionColorClass(emotion) {
+                const emotionToColor = {
+                    'joy': 'bg-success text-white',
+                    'love': 'bg-danger text-white',
+                    'anger': 'bg-danger text-white',
+                    'fear': 'bg-warning text-dark',
+                    'sadness': 'bg-primary text-white',
+                    'surprise': 'bg-info text-dark',
+                    'neutral': 'bg-secondary text-white'
+                };
+                
+                return emotionToColor[emotion] || 'bg-light text-dark';
+            }
+
+            // Initialize conversation when the page loads
+            startConversation();
+
+            // Conversation form submission
+            document.getElementById('conversation-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const text = document.getElementById('conversation-input').value.trim();
+                if (!text) return;
+                
+                // Clear input
+                document.getElementById('conversation-input').value = '';
+                
+                // Add message to conversation
+                if (!conversationId) {
+                    startConversation().then(() => {
+                        addMessageToConversation(text);
+                    });
+                } else {
+                    addMessageToConversation(text);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

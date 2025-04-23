@@ -69,6 +69,19 @@ python testing.py
 ```
 On top of the output given you will get a progression analysis saved in testing/ with different emotions and their spikes throughout the conversation.
 
+### Web Application
+
+To run the web application for interactive emotion analysis:
+
+```bash
+python app.py
+```
+
+This will start a Flask server that you can access at http://127.0.0.1:5000/
+
+The web application features a great user interface and experience. You are able to converse with yourself, mimicking a social media conversation, and the graph on the right will show the progression of your emotions throughout the conversation.
+
+
 ## Repository Structure
 
 ```
