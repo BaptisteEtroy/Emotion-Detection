@@ -93,6 +93,8 @@ Emotion-Detection/
 ├── testing/               # Output from testing.py: holds emotion progression over a conversation
 ├── evaluation_reports/    # Contains detailed evaluation reports with visualisations and metrics
 ├── visualisations/        # includes visualisation of emotion analysis over different phrases
+├── static/css             # contains the style for the webapp
+├── templates              # contains the index html file for the webapp
 |
 ├── emotion_mapping.json   # Detailed mapping of emotions with their descriptions
 |
@@ -100,6 +102,7 @@ Emotion-Detection/
 ├── model.py               # Hybrid emotion detection model training
 ├── evaluation.py          # Script for model evaluation
 ├── testing.py             # Script for analysing emotion progression over time
+├── app.py                 # Script for running the webapp
 |
 ├── requirements.txt
 └── README.md
